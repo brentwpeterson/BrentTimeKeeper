@@ -8,8 +8,19 @@
 import Foundation
 
 class WorkLogWriter {
-    // Path to Brent's work log
-    private let workLogPath = NSString(string: "~/scripts/CB-Workspace/brent-workspace/ob-notes/Brent Notes/Dashboard/Daily/WORK-LOG.md").expandingTildeInPath
+    // Path to work log - reads from environment variable or uses default
+    private let workLogPath: String
+
+    // Default path (users should set TIMEKEEPER_LOG_PATH environment variable)
+    private static let defaultPath = "~/Documents/WORK-LOG.md"
+
+    init() {
+        if let envPath = ProcessInfo.processInfo.environment["TIMEKEEPER_LOG_PATH"] {
+            workLogPath = NSString(string: envPath).expandingTildeInPath
+        } else {
+            workLogPath = NSString(string: WorkLogWriter.defaultPath).expandingTildeInPath
+        }
+    }
 
     func logSession(startTime: Date, endTime: Date, hours: Double, task: String?) {
         let dateFormatter = DateFormatter()
